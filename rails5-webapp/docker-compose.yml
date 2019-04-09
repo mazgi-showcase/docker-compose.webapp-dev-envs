@@ -1,0 +1,33 @@
+version: '2'
+services:
+  mysql:
+    image: mysql:5.6
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+  webapp:
+    build: ./Dockerfile.d/development/webapp
+    environment:
+      WEBAPP_DATABASE_HOST: 'mysql'
+      WEBAPP_DATABASE_USERNAME: 'root'
+      WEBAPP_DATABASE_PASSWORD: ''
+    command: >
+      bash -c "bundle
+      && ./scripts/wait-for-mysql.sh mysql
+      bin/rails server --port=3000 --binding=0.0.0.0"
+    working_dir: /webapp
+    volumes:
+      - webapp-gem-home:/usr/local/bundle
+      - ./webapp:/webapp
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql
+volumes:
+  mysql-data:
+    driver: local
+  webapp-gem-home:
+    driver: local

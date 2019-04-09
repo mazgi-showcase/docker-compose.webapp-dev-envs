@@ -1,0 +1,12 @@
+version: '2'
+services:
+  webapp:
+    build: ./Dockerfile.d/development/webapp
+    environment:
+      FLASK_DEBUG: 1
+      FLASK_APP: "app.py"
+    working_dir: /webapp
+    volumes:
+      - ./webapp:/webapp
+    ports:
+      - '5000:5000'
